@@ -9,46 +9,52 @@ const convertingText = document.getElementById('converting-text');
 let originalImageFile = null;
 let convertedBlob = null;
 
-// Open file dialog when drop area clicked
-dropArea.addEventListener('click', () => {
-  fileInput.click();
+// Prevent default drag behaviors on whole window
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  window.addEventListener(eventName, e => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
 });
 
-// Handle file input change
-fileInput.addEventListener('change', (e) => {
-  if (e.target.files && e.target.files[0]) {
-    loadImage(e.target.files[0]);
-  }
+// Highlight drop area on dragover
+dropArea.addEventListener('dragover', () => {
+  dropArea.classList.add('highlight');
 });
 
-// Handle drag & drop
-dropArea.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  dropArea.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+// Remove highlight on dragleave or drop
+dropArea.addEventListener('dragleave', () => {
+  dropArea.classList.remove('highlight');
 });
 
-dropArea.addEventListener('dragleave', (e) => {
-  e.preventDefault();
-  dropArea.style.backgroundColor = 'transparent';
-});
-
-dropArea.addEventListener('drop', (e) => {
-  e.preventDefault();
-  dropArea.style.backgroundColor = 'transparent';
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+dropArea.addEventListener('drop', e => {
+  dropArea.classList.remove('highlight');
+  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
     loadImage(e.dataTransfer.files[0]);
+    e.dataTransfer.clearData();
   }
 });
 
-// Load image and show preview
+// Click on drop area triggers file input
+dropArea.addEventListener('click', () => fileInput.click());
+
+// Handle file selected via input
+fileInput.addEventListener('change', () => {
+  if (fileInput.files && fileInput.files.length > 0) {
+    loadImage(fileInput.files[0]);
+  }
+});
+
+// Load image & preview
 function loadImage(file) {
   if (!file.type.startsWith('image/')) {
-    alert('Please upload a valid image file!');
+    alert('Please upload an image file.');
     return;
   }
   originalImageFile = file;
+
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = e => {
     previewImage.src = e.target.result;
     previewContainer.style.display = 'block';
     convertBtn.disabled = false;
@@ -58,7 +64,7 @@ function loadImage(file) {
   reader.readAsDataURL(file);
 }
 
-// Simulate convert to 4K (just resave the image in this example)
+// Convert and enable download
 convertBtn.addEventListener('click', () => {
   if (!originalImageFile) return;
 
@@ -66,21 +72,36 @@ convertBtn.addEventListener('click', () => {
   downloadBtn.disabled = true;
   convertingText.style.display = 'block';
 
-  // Use canvas to redraw image at same resolution
   const img = new Image();
   img.onload = () => {
+    // Create 4K canvas size (3840 x 2160)
     const canvas = document.createElement('canvas');
-
-    // For real 4K, we'd upscale to 3840x2160 or similar.
-    // Here we keep original resolution to simulate.
-    canvas.width = img.width;
-    canvas.height = img.height;
+    canvas.width = 3840;
+    canvas.height = 2160;
 
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    // Convert canvas to blob for download
-    canvas.toBlob((blob) => {
+    // Calculate aspect ratio and fit image inside 4K canvas centered
+    const aspectRatio = img.width / img.height;
+    let drawWidth, drawHeight;
+
+    if (3840 / 2160 > aspectRatio) {
+      // canvas wider ratio than image
+      drawHeight = 2160;
+      drawWidth = drawHeight * aspectRatio;
+    } else {
+      drawWidth = 3840;
+      drawHeight = drawWidth / aspectRatio;
+    }
+
+    const dx = (3840 - drawWidth) / 2;
+    const dy = (2160 - drawHeight) / 2;
+
+    ctx.fillStyle = '#fff'; // white background
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
+
+    canvas.toBlob(blob => {
       convertedBlob = blob;
       downloadBtn.disabled = false;
       convertingText.style.display = 'none';
@@ -90,7 +111,6 @@ convertBtn.addEventListener('click', () => {
   img.src = URL.createObjectURL(originalImageFile);
 });
 
-// Download the converted image
 downloadBtn.addEventListener('click', () => {
   if (!convertedBlob) return;
 
