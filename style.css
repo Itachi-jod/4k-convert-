@@ -1,92 +1,120 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap');
 
 body {
+  margin: 0;
   font-family: 'Quicksand', sans-serif;
-  background: linear-gradient(270deg, #ffe4ec, #fcd3e2, #fceff9);
+  background: linear-gradient(270deg, #a0c8f0, #81aee3, #c2d9f7);
   background-size: 600% 600%;
   animation: gradientAnimation 12s ease infinite;
   text-align: center;
-  color: #444;
-  margin: 0;
-  padding: 40px 20px;
-}
-
-h1 {
-  font-family: 'Pacifico', cursive;
-  font-size: 2.8rem;
-  color: #d6006d;
-  margin-bottom: 30px;
-}
-
-#drop-area {
-  border: 3px dashed #f4719a;
-  border-radius: 20px;
-  padding: 50px 20px;
-  max-width: 500px;
-  margin: 0 auto 30px;
-  cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-#drop-area.highlight {
-  background-color: rgba(255, 64, 129, 0.15);
-  border-color: #ff4081;
-}
-
-#drop-area p {
-  font-size: 1.2rem;
-  color: #f4719a;
-}
-
-.preview {
-  margin-bottom: 30px;
-}
-
-.preview img {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease;
-}
-
-.preview img:hover {
-  transform: scale(1.05);
-}
-
-button {
-  background-color: #ff4081;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.1rem;
-  border-radius: 30px;
-  margin: 10px 15px;
-  cursor: pointer;
-  box-shadow: 0 6px 15px rgba(255, 64, 129, 0.6);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:disabled {
-  background-color: #f8bbd0;
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
-}
-
-button:hover:not(:disabled) {
-  background-color: #e73370;
-  transform: scale(1.1);
-}
-
-#converting-text {
-  font-size: 1.1rem;
-  color: #d6006d;
-  margin-top: 20px;
+  color: #223355;
 }
 
 @keyframes gradientAnimation {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+#lock-screen {
+  margin-top: 150px;
+  animation: fadeIn 1.5s ease;
+}
+
+h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #154c8b;
+}
+
+#lock-screen input {
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: 2px solid #3a82f6;
+  outline: none;
+  width: 250px;
+  max-width: 80%;
+  transition: border 0.3s ease;
+  color: #154c8b;
+}
+
+#lock-screen input:focus {
+  border-color: #1a65d0;
+}
+
+#unlock-btn {
+  padding: 12px 25px;
+  font-size: 18px;
+  margin-top: 15px;
+  background-color: #1a65d0;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(26, 101, 208, 0.5);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#unlock-btn:hover {
+  background-color: #1553a0;
+  transform: scale(1.05);
+}
+
+.hidden {
+  display: none;
+}
+
+#main-content {
+  padding: 30px 15px;
+  animation: fadeIn 1s ease forwards;
+}
+
+#main-content h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 36px;
+  color: #154c8b;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.gallery img {
+  width: 200px;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(21, 76, 139, 0.4);
+  transition: transform 0.3s ease;
+}
+
+.gallery img:hover {
+  transform: scale(1.08);
+}
+
+footer {
+  margin: 50px 0 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #6688bb;
+}
+
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
