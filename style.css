@@ -1,147 +1,92 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-* {
-  box-sizing: border-box;
-}
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap');
 
 body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #8BC6EC, #9599E2);
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  overflow: hidden;
-}
-
-.container {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 40px;
-  width: 90%;
-  max-width: 500px;
+  font-family: 'Quicksand', sans-serif;
+  background: linear-gradient(270deg, #ffe4ec, #fcd3e2, #fceff9);
+  background-size: 600% 600%;
+  animation: gradientAnimation 12s ease infinite;
   text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  animation: fadeInScale 0.8s ease forwards;
+  color: #444;
+  margin: 0;
+  padding: 40px 20px;
 }
 
-.title {
-  font-weight: 600;
-  font-size: 1.8rem;
+h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 2.8rem;
+  color: #d6006d;
   margin-bottom: 30px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.drop-area {
-  border: 2px dashed rgba(255, 255, 255, 0.6);
-  padding: 30px 20px;
-  border-radius: 16px;
+#drop-area {
+  border: 3px dashed #f4719a;
+  border-radius: 20px;
+  padding: 50px 20px;
+  max-width: 500px;
+  margin: 0 auto 30px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-bottom: 25px;
-  user-select: none;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
-.drop-area:hover {
-  background-color: rgba(255, 255, 255, 0.15);
+#drop-area.highlight {
+  background-color: rgba(255, 64, 129, 0.15);
+  border-color: #ff4081;
 }
 
-.drop-area p {
-  margin: 0 0 12px 0;
-  font-size: 1.1rem;
-}
-
-input[type="file"] {
-  display: none;
-}
-
-.btn {
-  background-color: #5A4FCF;
-  padding: 10px 24px;
-  border-radius: 30px;
-  font-weight: 600;
-  font-size: 1rem;
-  color: white;
-  cursor: pointer;
-  user-select: none;
-  box-shadow: 0 4px 15px rgba(90, 79, 207, 0.6);
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #463EAE;
+#drop-area p {
+  font-size: 1.2rem;
+  color: #f4719a;
 }
 
 .preview {
-  margin-bottom: 25px;
-  animation: fadeIn 0.6s ease forwards;
+  margin-bottom: 30px;
 }
 
 .preview img {
-  width: 100%;
-  border-radius: 16px;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.5);
+  max-width: 100%;
   max-height: 300px;
-  object-fit: contain;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
 }
 
-.converting p {
-  font-size: 1.2rem;
-  font-weight: 500;
-  user-select: none;
-  animation: pulse 1.5s infinite ease-in-out;
-}
-
-.dots::after {
-  content: '';
-  animation: dots 1.5s steps(4, end) infinite;
-}
-
-.download-btn {
-  background-color: #ff4081;
-  padding: 14px 32px;
-  border-radius: 40px;
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: white;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(255, 64, 129, 0.7);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.download-btn:hover:not(:disabled) {
-  background-color: #e73370;
+.preview img:hover {
   transform: scale(1.05);
 }
 
-.download-btn:disabled {
-  opacity: 0.6;
+button {
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  border-radius: 30px;
+  margin: 10px 15px;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(255, 64, 129, 0.6);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:disabled {
+  background-color: #f8bbd0;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
-/* Animations */
-
-@keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+button:hover:not(:disabled) {
+  background-color: #e73370;
+  transform: scale(1.1);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+#converting-text {
+  font-size: 1.1rem;
+  color: #d6006d;
+  margin-top: 20px;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes dots {
-  0%, 20% { content: ''; }
-  40% { content: '.'; }
-  60% { content: '..'; }
-  80%, 100% { content: '...'; }
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
