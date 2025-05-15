@@ -3,31 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>4K Image Converter ✨</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <title>4K Image Converter</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">Convert Your Image to Stunning 4K Quality</h1>
-    
-    <div id="drop-area" class="drop-area">
-      <p>Drag & Drop your image here or</p>
-      <input type="file" id="fileElem" accept="image/*" />
-      <label for="fileElem" class="btn">Browse Files</label>
-    </div>
+  <h1>Image to 4K Quality Converter</h1>
 
-    <div id="preview" class="preview hidden">
-      <h2>Preview</h2>
-      <img id="preview-img" src="" alt="Preview Image" />
-    </div>
-
-    <div id="converting" class="converting hidden">
-      <p>Converting to 4K... Please wait<span class="dots">...</span></p>
-    </div>
-
-    <button id="download-btn" class="download-btn hidden" disabled>Download 4K Image</button>
+  <div id="drop-area">
+    <p>Drag & Drop your image here or click to select</p>
+    <input type="file" id="file-input" accept="image/*" hidden />
   </div>
+
+  <div class="preview" style="display:none;">
+    <img id="preview-image" alt="Preview" />
+  </div>
+
+  <button id="convert-btn" disabled>Convert to 4K</button>
+  <button id="download-btn" disabled>Download 4K Image</button>
+
+  <p id="converting-text" style="display:none;">Converting image, please wait...</p>
 
   <script src="script.js"></script>
 </body>
