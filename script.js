@@ -1,61 +1,53 @@
-const fileInput = document.getElementById('fileInput');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const downloadBtn = document.getElementById('download');
-const container = document.querySelector('.container');
+const inputFile = document.getElementById('inputFile');
+const downloadBtn = document.getElementById('downloadBtn');
+const previewImg = document.getElementById('previewImg');
 
-fileInput.addEventListener('change', async (e) => {
+inputFile.addEventListener('change', (e) => {
   const file = e.target.files[0];
-  if (!file || !file.type.startsWith('image/')) return alert("Please upload a valid image.");
+  if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(event) {
-    const img = new Image();
-    img.onload = function() {
-      const upscaleWidth = 3840; // 4K Width
-      const upscaleHeight = 2160; // 4K Height
-
-      // Set canvas size
-      canvas.width = upscaleWidth;
-      canvas.height = upscaleHeight;
-
-      // Draw the image scaled
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, upscaleWidth, upscaleHeight);
-
-      canvas.classList.remove('hidden');
-      downloadBtn.classList.remove('hidden');
-      downloadBtn.href = canvas.toDataURL('image/jpeg');
-      downloadBtn.download = 'enhanced-4k.jpg';
-
-      showConfetti();
-    };
-    img.src = event.target.result;
+  reader.onload = () => {
+    previewImg.src = reader.result;
   };
   reader.readAsDataURL(file);
 });
 
-function showConfetti() {
-  const confettiContainer = document.createElement('div');
-  confettiContainer.style.position = 'fixed';
-  confettiContainer.style.top = 0;
-  confettiContainer.style.left = 0;
-  confettiContainer.style.width = '100%';
-  confettiContainer.style.height = '100%';
-  confettiContainer.style.pointerEvents = 'none';
-  confettiContainer.style.zIndex = 9999;
-  document.body.appendChild(confettiContainer);
-
-  for (let i = 0; i < 100; i++) {
-    const confetti = document.createElement('div');
-    confetti.style.position = 'absolute';
-    confetti.style.width = '10px';
-    confetti.style.height = '10px';
-    confetti.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
-    confetti.style.left = `${Math.random() * 100}%`;
-    confetti.style.top = `${Math.random() * -20}%`;
-    confetti.style.opacity = 0.9;
-    confetti.style.animation = `fall ${3 + Math.random() * 2}s ease-out infinite`;
-    confettiContainer.appendChild(confetti);
+downloadBtn.addEventListener('click', () => {
+  if (!previewImg.src) {
+    alert('Please upload an image first!');
+    return;
   }
-}
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Set canvas size for 4K resolution
+  canvas.width = 3840;
+  canvas.height = 2160;
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.src = previewImg.src;
+
+  img.onload = () => {
+    // Calculate aspect ratio and draw image centered & resized
+    let ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
+    let newWidth = img.width * ratio;
+    let newHeight = img.height * ratio;
+    let xOffset = (canvas.width - newWidth) / 2;
+    let yOffset = (canvas.height - newHeight) / 2;
+
+    ctx.fillStyle = '#fff'; // optional: white background
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, xOffset, yOffset, newWidth, newHeight);
+
+    canvas.toBlob((blob) => {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'converted-4k-image.png';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }, 'image/png', 1);
+  };
+});
