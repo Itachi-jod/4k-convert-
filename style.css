@@ -31,7 +31,7 @@ h2 {
   padding: 12px;
   font-size: 18px;
   border-radius: 10px;
-  border: 2px solid #3a82f6;
+  border: 2px solid #3a82f6; /* changed from pink */
   outline: none;
   width: 250px;
   max-width: 80%;
@@ -40,24 +40,24 @@ h2 {
 }
 
 #lock-screen input:focus {
-  border-color: #1a65d0;
+  border-color: #1a65d0; /* changed from pink */
 }
 
 #unlock-btn {
   padding: 12px 25px;
   font-size: 18px;
   margin-top: 15px;
-  background-color: #1a65d0;
+  background-color: #1a65d0; /* changed from pink */
   color: white;
   border: none;
   border-radius: 25px;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(26, 101, 208, 0.5);
+  box-shadow: 0 4px 10px rgba(26, 101, 208, 0.5); /* changed from pink */
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
 #unlock-btn:hover {
-  background-color: #1553a0;
+  background-color: #1553a0; /* changed from pink */
   transform: scale(1.05);
 }
 
@@ -73,7 +73,7 @@ h2 {
 #main-content h1 {
   font-family: 'Pacifico', cursive;
   font-size: 36px;
-  color: #154c8b;
+  color: #154c8b; /* changed from pink */
   margin-top: 40px;
   margin-bottom: 30px;
 }
@@ -89,7 +89,7 @@ h2 {
   width: 200px;
   height: auto;
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(21, 76, 139, 0.4);
+  box-shadow: 0 8px 20px rgba(21, 76, 139, 0.4); /* changed from pink */
   transition: transform 0.3s ease;
 }
 
@@ -101,7 +101,7 @@ footer {
   margin: 50px 0 20px;
   font-size: 16px;
   font-weight: bold;
-  color: #6688bb;
+  color: #6688bb; /* changed from grayish */
 }
 
 #confetti-canvas {
