@@ -2,18 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Image Enhancer 4K</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>4K Image Converter</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <audio id="bgMusic" loop autoplay>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/14/audio_8f13e87eea.mp3?filename=relaxing-background-music-10716.mp3" type="audio/mpeg" />
+  </audio>
+
   <div class="container">
     <h1>Convert Image to 4K ✨</h1>
     <p>Upload your photo and see the magic!</p>
-    <input type="file" id="upload" accept="image/*"/>
-    <canvas id="canvas" class="hidden"></canvas>
-    <a id="download" class="hidden" download="enhanced-4k.png">Download 4K Image</a>
+    <input type="file" id="upload" accept="image/*" />
+    <button id="convertBtn">Download 4K Image</button>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
