@@ -3,19 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>4K Image Converter</title>
+  <title>4K Image Converter ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <audio id="bgMusic" loop autoplay>
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/14/audio_8f13e87eea.mp3?filename=relaxing-background-music-10716.mp3" type="audio/mpeg" />
-  </audio>
-
   <div class="container">
-    <h1>Convert Image to 4K ✨</h1>
-    <p>Upload your photo and see the magic!</p>
-    <input type="file" id="upload" accept="image/*" />
-    <button id="convertBtn">Download 4K Image</button>
+    <h1 class="title">Convert Your Image to Stunning 4K Quality</h1>
+    
+    <div id="drop-area" class="drop-area">
+      <p>Drag & Drop your image here or</p>
+      <input type="file" id="fileElem" accept="image/*" />
+      <label for="fileElem" class="btn">Browse Files</label>
+    </div>
+
+    <div id="preview" class="preview hidden">
+      <h2>Preview</h2>
+      <img id="preview-img" src="" alt="Preview Image" />
+    </div>
+
+    <div id="converting" class="converting hidden">
+      <p>Converting to 4K... Please wait<span class="dots">...</span></p>
+    </div>
+
+    <button id="download-btn" class="download-btn hidden" disabled>Download 4K Image</button>
   </div>
 
   <script src="script.js"></script>
