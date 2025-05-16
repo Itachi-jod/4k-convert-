@@ -74,19 +74,17 @@ convertBtn.addEventListener('click', () => {
 
   const img = new Image();
   img.onload = () => {
-    // Create 4K canvas size (3840 x 2160)
     const canvas = document.createElement('canvas');
     canvas.width = 3840;
     canvas.height = 2160;
 
     const ctx = canvas.getContext('2d');
 
-    // Calculate aspect ratio and fit image inside 4K canvas centered
+    // Calculate aspect ratio to fit inside 4K canvas
     const aspectRatio = img.width / img.height;
     let drawWidth, drawHeight;
 
     if (3840 / 2160 > aspectRatio) {
-      // canvas wider ratio than image
       drawHeight = 2160;
       drawWidth = drawHeight * aspectRatio;
     } else {
