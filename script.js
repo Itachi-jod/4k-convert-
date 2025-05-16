@@ -1,6 +1,5 @@
 const fileInput = document.getElementById('file-input');
 const dropArea = document.getElementById('drop-area');
-const previewContainer = document.querySelector('.preview');
 const previewImage = document.getElementById('preview-image');
 const convertBtn = document.getElementById('convert-btn');
 const downloadBtn = document.getElementById('download-btn');
@@ -9,7 +8,6 @@ const convertingText = document.getElementById('converting-text');
 let originalImageFile = null;
 let convertedBlob = null;
 
-// Prevent default drag behaviors on whole window
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
   window.addEventListener(eventName, e => {
     e.preventDefault();
@@ -17,15 +15,8 @@ let convertedBlob = null;
   });
 });
 
-// Highlight drop area on dragover
-dropArea.addEventListener('dragover', () => {
-  dropArea.classList.add('highlight');
-});
-
-// Remove highlight on dragleave or drop
-dropArea.addEventListener('dragleave', () => {
-  dropArea.classList.remove('highlight');
-});
+dropArea.addEventListener('dragover', () => dropArea.classList.add('highlight'));
+dropArea.addEventListener('dragleave', () => dropArea.classList.remove('highlight'));
 
 dropArea.addEventListener('drop', e => {
   dropArea.classList.remove('highlight');
@@ -35,17 +26,14 @@ dropArea.addEventListener('drop', e => {
   }
 });
 
-// Click on drop area triggers file input
 dropArea.addEventListener('click', () => fileInput.click());
 
-// Handle file selected via input
 fileInput.addEventListener('change', () => {
   if (fileInput.files && fileInput.files.length > 0) {
     loadImage(fileInput.files[0]);
   }
 });
 
-// Load image & preview
 function loadImage(file) {
   if (!file.type.startsWith('image/')) {
     alert('Please upload an image file.');
@@ -56,7 +44,7 @@ function loadImage(file) {
   const reader = new FileReader();
   reader.onload = e => {
     previewImage.src = e.target.result;
-    previewContainer.style.display = 'block';
+    previewImage.style.display = 'block';
     convertBtn.disabled = false;
     downloadBtn.disabled = true;
     convertingText.style.display = 'none';
@@ -64,7 +52,6 @@ function loadImage(file) {
   reader.readAsDataURL(file);
 }
 
-// Convert and enable download
 convertBtn.addEventListener('click', () => {
   if (!originalImageFile) return;
 
@@ -77,27 +64,25 @@ convertBtn.addEventListener('click', () => {
     const canvas = document.createElement('canvas');
     canvas.width = 3840;
     canvas.height = 2160;
-
     const ctx = canvas.getContext('2d');
 
-    // Calculate aspect ratio to fit inside 4K canvas
-    const aspectRatio = img.width / img.height;
-    let drawWidth, drawHeight;
+    const imgRatio = img.width / img.height;
+    const canvasRatio = canvas.width / canvas.height;
+    let sx, sy, sWidth, sHeight;
 
-    if (3840 / 2160 > aspectRatio) {
-      drawHeight = 2160;
-      drawWidth = drawHeight * aspectRatio;
+    if (imgRatio > canvasRatio) {
+      sHeight = img.height;
+      sWidth = sHeight * canvasRatio;
+      sx = (img.width - sWidth) / 2;
+      sy = 0;
     } else {
-      drawWidth = 3840;
-      drawHeight = drawWidth / aspectRatio;
+      sWidth = img.width;
+      sHeight = sWidth / canvasRatio;
+      sx = 0;
+      sy = (img.height - sHeight) / 2;
     }
 
-    const dx = (3840 - drawWidth) / 2;
-    const dy = (2160 - drawHeight) / 2;
-
-    ctx.fillStyle = '#fff'; // white background
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
+    ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob(blob => {
       convertedBlob = blob;
