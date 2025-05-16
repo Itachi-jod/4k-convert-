@@ -1,99 +1,61 @@
-const fileInput = document.getElementById('file-input');
-const dropArea = document.getElementById('drop-area');
-const previewImage = document.getElementById('preview-image');
-const convertBtn = document.getElementById('convert-btn');
-const downloadBtn = document.getElementById('download-btn');
-const convertingText = document.getElementById('converting-text');
+const dropArea = document.querySelector(".drop-area");
+const convertBtn = document.querySelector(".convert-btn");
+const downloadBtn = document.querySelector(".download-btn");
+let imageFile, convertedBlob;
 
-let originalImageFile = null;
-let convertedBlob = null;
+dropArea.onclick = () => document.createElement("input").click();
 
-// Handle drag-and-drop
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  window.addEventListener(eventName, e => {
-    e.preventDefault();
-    e.stopPropagation();
-  });
+dropArea.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropArea.classList.add("active");
 });
 
-dropArea.addEventListener('dragover', () => dropArea.classList.add('highlight'));
-dropArea.addEventListener('dragleave', () => dropArea.classList.remove('highlight'));
-dropArea.addEventListener('drop', e => {
-  dropArea.classList.remove('highlight');
-  if (e.dataTransfer.files.length > 0) {
-    loadImage(e.dataTransfer.files[0]);
-  }
+dropArea.addEventListener("dragleave", () => {
+  dropArea.classList.remove("active");
 });
 
-dropArea.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', () => {
-  if (fileInput.files.length > 0) {
-    loadImage(fileInput.files[0]);
-  }
+dropArea.addEventListener("drop", (e) => {
+  e.preventDefault();
+  imageFile = e.dataTransfer.files[0];
+  dropArea.innerText = `Selected: ${imageFile.name}`;
 });
 
-function loadImage(file) {
-  if (!file.type.startsWith('image/')) {
-    alert('Please upload an image.');
-    return;
-  }
-  originalImageFile = file;
+convertBtn.onclick = async () => {
+  if (!imageFile) return alert("Upload an image first");
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    previewImage.src = e.target.result;
-    previewImage.style.display = 'block';
-    convertBtn.disabled = false;
-    downloadBtn.disabled = true;
-    convertingText.style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-}
+  const formData = new FormData();
+  formData.append("file", imageFile);
 
-convertBtn.addEventListener('click', async () => {
-  if (!originalImageFile) return;
+  // Upload image temporarily to imgur or another temp uploader
+  const tempUrl = await uploadImage(imageFile); // <- you must implement or use a real service
+  if (!tempUrl) return alert("Upload failed");
 
-  convertBtn.disabled = true;
-  downloadBtn.disabled = true;
-  convertingText.style.display = 'block';
-
+  convertBtn.innerText = "Converting...";
   try {
-    // Step 1: Upload to ImgBB
-    const formData = new FormData();
-    formData.append('image', originalImageFile);
-    const imgbbKey = 'bb76aca183bff957183bcb5bceb9a891';
-    const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbKey}`, {
-      method: 'POST',
-      body: formData
+    const res = await fetch('https://your-server-url/api/convert', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ imageUrl: tempUrl })
     });
-    const imgbbData = await imgbbRes.json();
-    if (!imgbbData.success) throw new Error('Image upload failed.');
 
-    const imgUrl = imgbbData.data.url;
+    if (!res.ok) throw new Error("Conversion failed");
 
-    // Step 2: Send to upscaling API
-    const upscaleUrl = `https://smfahim.xyz/4k?url=${encodeURIComponent(imgUrl)}`;
-    const upscaleRes = await fetch(upscaleUrl);
-    const upscaleBlob = await upscaleRes.blob();
+    const blob = await res.blob();
+    convertedBlob = blob;
 
-    // Step 3: Show download button
-    convertedBlob = upscaleBlob;
-    downloadBtn.disabled = false;
-    convertingText.style.display = 'none';
-    convertBtn.disabled = false;
+    const imgUrl = URL.createObjectURL(blob);
+    downloadBtn.href = imgUrl;
+    downloadBtn.download = "converted_4k.jpg";
+    downloadBtn.style.display = "inline-block";
+    convertBtn.innerText = "Done!";
   } catch (err) {
-    alert('Error: ' + err.message);
-    convertingText.style.display = 'none';
-    convertBtn.disabled = false;
+    alert("Error: " + err.message);
+    convertBtn.innerText = "Convert to 4K";
   }
-});
+};
 
-downloadBtn.addEventListener('click', () => {
-  if (!convertedBlob) return;
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(convertedBlob);
-  link.download = 'converted-4k-image.png';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-});
+// Dummy uploadImage function – Replace with real image hosting logic
+async function uploadImage(file) {
+  // Implement upload to Imgur, Cloudinary, etc.
+  return null;
+}
