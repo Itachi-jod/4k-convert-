@@ -8,6 +8,7 @@ const convertingText = document.getElementById('converting-text');
 let originalImageFile = null;
 let convertedBlob = null;
 
+// Prevent default drag behaviors
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
   window.addEventListener(eventName, e => {
     e.preventDefault();
@@ -15,9 +16,12 @@ let convertedBlob = null;
   });
 });
 
+// Highlight drop area on dragover
 dropArea.addEventListener('dragover', () => dropArea.classList.add('highlight'));
+// Remove highlight on dragleave
 dropArea.addEventListener('dragleave', () => dropArea.classList.remove('highlight'));
 
+// Handle drop event
 dropArea.addEventListener('drop', e => {
   dropArea.classList.remove('highlight');
   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -26,14 +30,17 @@ dropArea.addEventListener('drop', e => {
   }
 });
 
+// Click on drop area triggers file input
 dropArea.addEventListener('click', () => fileInput.click());
 
+// Handle file input change
 fileInput.addEventListener('change', () => {
   if (fileInput.files && fileInput.files.length > 0) {
     loadImage(fileInput.files[0]);
   }
 });
 
+// Load and preview image
 function loadImage(file) {
   if (!file.type.startsWith('image/')) {
     alert('Please upload an image file.');
@@ -52,6 +59,7 @@ function loadImage(file) {
   reader.readAsDataURL(file);
 }
 
+// Convert image to 4K with cropping to cover
 convertBtn.addEventListener('click', () => {
   if (!originalImageFile) return;
 
@@ -94,6 +102,7 @@ convertBtn.addEventListener('click', () => {
   img.src = URL.createObjectURL(originalImageFile);
 });
 
+// Download converted 4K image
 downloadBtn.addEventListener('click', () => {
   if (!convertedBlob) return;
 
@@ -102,5 +111,9 @@ downloadBtn.addEventListener('click', () => {
   link.download = 'converted-4k-image.png';
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+
+  setTimeout(() => {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  }, 100);
 });
