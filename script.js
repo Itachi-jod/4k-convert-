@@ -8,6 +8,7 @@ const convertingText = document.getElementById('converting-text');
 let originalImageFile = null;
 let convertedBlob = null;
 
+// Handle drag-and-drop
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
   window.addEventListener(eventName, e => {
     e.preventDefault();
@@ -17,26 +18,23 @@ let convertedBlob = null;
 
 dropArea.addEventListener('dragover', () => dropArea.classList.add('highlight'));
 dropArea.addEventListener('dragleave', () => dropArea.classList.remove('highlight'));
-
 dropArea.addEventListener('drop', e => {
   dropArea.classList.remove('highlight');
-  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+  if (e.dataTransfer.files.length > 0) {
     loadImage(e.dataTransfer.files[0]);
-    e.dataTransfer.clearData();
   }
 });
 
 dropArea.addEventListener('click', () => fileInput.click());
-
 fileInput.addEventListener('change', () => {
-  if (fileInput.files && fileInput.files.length > 0) {
+  if (fileInput.files.length > 0) {
     loadImage(fileInput.files[0]);
   }
 });
 
 function loadImage(file) {
   if (!file.type.startsWith('image/')) {
-    alert('Please upload an image file.');
+    alert('Please upload an image.');
     return;
   }
   originalImageFile = file;
@@ -52,52 +50,50 @@ function loadImage(file) {
   reader.readAsDataURL(file);
 }
 
-convertBtn.addEventListener('click', () => {
+convertBtn.addEventListener('click', async () => {
   if (!originalImageFile) return;
 
   convertBtn.disabled = true;
   downloadBtn.disabled = true;
   convertingText.style.display = 'block';
 
-  const img = new Image();
-  img.onload = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 3840;
-    canvas.height = 2160;
-    const ctx = canvas.getContext('2d');
+  try {
+    // Step 1: Upload to ImgBB
+    const formData = new FormData();
+    formData.append('image', originalImageFile);
+    const imgbbKey = 'bb76aca183bff957183bcb5bceb9a891';
+    const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbKey}`, {
+      method: 'POST',
+      body: formData
+    });
+    const imgbbData = await imgbbRes.json();
+    if (!imgbbData.success) throw new Error('Image upload failed.');
 
-    const imgRatio = img.width / img.height;
-    const canvasRatio = canvas.width / canvas.height;
-    let sx, sy, sWidth, sHeight;
+    const imgUrl = imgbbData.data.url;
 
-    if (imgRatio > canvasRatio) {
-      sHeight = img.height;
-      sWidth = sHeight * canvasRatio;
-      sx = (img.width - sWidth) / 2;
-      sy = 0;
-    } else {
-      sWidth = img.width;
-      sHeight = sWidth / canvasRatio;
-      sx = 0;
-      sy = (img.height - sHeight) / 2;
-    }
+    // Step 2: Send to upscaling API
+    const upscaleUrl = `https://smfahim.xyz/4k?url=${encodeURIComponent(imgUrl)}`;
+    const upscaleRes = await fetch(upscaleUrl);
+    const upscaleBlob = await upscaleRes.blob();
 
-    ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-
-    canvas.toBlob(blob => {
-      convertedBlob = blob;
-      downloadBtn.disabled = false;
-      convertingText.style.display = 'none';
-      convertBtn.disabled = false;
-    }, 'image/png', 1);
-  };
-  img.src = URL.createObjectURL(originalImageFile);
+    // Step 3: Show download button
+    convertedBlob = upscaleBlob;
+    downloadBtn.disabled = false;
+    convertingText.style.display = 'none';
+    convertBtn.disabled = false;
+  } catch (err) {
+    alert('Error: ' + err.message);
+    convertingText.style.display = 'none';
+    convertBtn.disabled = false;
+  }
 });
 
 downloadBtn.addEventListener('click', () => {
   if (!convertedBlob) return;
-
-  // Open in new tab instead of direct download to avoid Messenger issue
-  const url = URL.createObjectURL(convertedBlob);
-  window.open(url, '_blank');
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(convertedBlob);
+  link.download = 'converted-4k-image.png';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 });
