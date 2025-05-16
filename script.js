@@ -97,25 +97,7 @@ convertBtn.addEventListener('click', () => {
 downloadBtn.addEventListener('click', () => {
   if (!convertedBlob) return;
 
+  // Open in new tab instead of direct download to avoid Messenger issue
   const url = URL.createObjectURL(convertedBlob);
-
-  // Detect Messenger in-app browser
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  const isMessengerBrowser = /FBAN|FBAV|Messenger/i.test(userAgent);
-
-  if (isMessengerBrowser) {
-    // Open image in new tab for manual save
-    window.open(url, '_blank');
-  } else {
-    // Normal download
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'converted-4k-image.png';
-    document.body.appendChild(link);
-    link.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-      document.body.removeChild(link);
-    }, 1000);
-  }
+  window.open(url, '_blank');
 });
